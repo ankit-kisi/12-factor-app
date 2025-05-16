@@ -1,184 +1,133 @@
 # Text Sentiment Analysis API
 
-A FastAPI application for analyzing text sentiment following 12-factor app principles.
+A FastAPI application for analyzing text sentiment and emotions.
 
-## Features
+## Quick Setup
 
-- Analyze text sentiment (positive, negative, or neutral)
-- Get polarity and subjectivity scores for text
-- RESTful API with SwaggerUI documentation
-
-## Requirements
-
-- Python 3.7 - 3.12 (Python 3.13 has compatibility issues with some dependencies)
-- Dependencies listed in `requirements.txt`
-
-## Installation
-
-1. Clone the repository:
+### Installation
 
 ```bash
-git clone <repository-url>
+# 1. Clone the repository
+git clone https://github.com/ankit-kisi/12-factor-app.git
 cd 12-factor-calc
-```
 
-2. Create a virtual environment and activate it:
+# 2. Create and activate virtual environment
+python3.11 -m venv venv_py311
+source venv_py311/bin/activate  # On Windows: venv_py311\Scripts\activate
 
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-
-```bash
+# 3. Install dependencies
 pip install -r requirements.txt
 ```
 
-## Configuration
-
-This application follows the 12-factor app principles. Configuration is handled through environment variables in the `.env` file.
-
-Key environment variables:
-
-- `APP_NAME`: Name of the application (default: sentiment-analysis-api)
-- `ENV`: Current environment (development, testing, production)
-- `DEBUG`: Debug mode (True/False)
-- `LOG_LEVEL`: Logging level (debug, info, warning, error)
-- `API_V1_STR`: API version prefix
-- `ALLOWED_ORIGINS`: CORS allowed origins
-
-## Running the Application
-
-### Option 1: Using Docker (Recommended)
-
-This method works regardless of your Python version:
+### Running the API
 
 ```bash
-# Build and start the Docker container
-docker-compose up
-
-# Or to run in the background
-docker-compose up -d
+# Start the server
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Option 2: Running locally
+The API will be available at:
 
-If you have a compatible Python version (3.7-3.12):
-
-```bash
-# Make the script executable if not already
-chmod +x start.sh
-
-# Run the application
-./start.sh
-```
-
-Or run manually:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Or use the main.py script:
-
-```bash
-python -m app.main
-```
-
-The API will be available at http://localhost:8000
-
-API documentation is available at:
-
+- http://localhost:8000
 - Swagger UI: http://localhost:8000/api/v1/docs
-- ReDoc: http://localhost:8000/api/v1/redoc
 
-## Testing
+## Using the API
 
-To run tests:
+### API Endpoints
+
+#### 1. Sentiment Analysis
+
+**Endpoint**: `POST /api/v1/sentiment/sentiment`
+
+**Example with curl:**
 
 ```bash
-pytest
+curl -X 'POST' 'http://localhost:8000/api/v1/sentiment/sentiment' \
+  -H 'Content-Type: application/json' \
+  -d '{"text": "I absolutely love this product. It is amazing!"}'
 ```
 
-## API Endpoints
-
-### Sentiment Analysis
-
-```
-POST /api/v1/sentiment/sentiment
-```
-
-Request body:
+**Example response:**
 
 ```json
 {
-  "text": "This is a sample text for sentiment analysis"
+  "text": "I absolutely love this product. It is amazing!",
+  "sentiment": "positive",
+  "polarity": 0.625,
+  "subjectivity": 0.75
 }
 ```
 
-Response:
+#### 2. Health Check
 
-```json
-{
-  "text": "This is a sample text for sentiment analysis",
-  "sentiment": "neutral",
-  "polarity": 0.0,
-  "subjectivity": 0.0
-}
+**Endpoint**: `GET /api/v1/sentiment/health`
+
+**Example with curl:**
+
+```bash
+curl -X 'GET' 'http://localhost:8000/api/v1/sentiment/health'
 ```
 
-### Health Check
+### Provided Examples
 
-```
-GET /api/v1/sentiment/health
+This project includes several examples to help you get started:
+
+#### 1. Command Line Tool
+
+The `sentiment_cli.py` script provides a simple command-line interface:
+
+```bash
+# Make the script executable
+chmod +x sentiment_cli.py
+
+# Analyze text directly
+./sentiment_cli.py "I love this product. It's amazing!"
+
+# Analyze text from a file
+./sentiment_cli.py -f sample_review.txt
+
+# Enter text interactively
+./sentiment_cli.py
 ```
 
-Response:
+#### 2. Web Interface Demo
 
-```json
-{
-  "status": "healthy"
-}
+Open the HTML demo in your browser:
+
+```bash
+# On macOS
+open sentiment_demo.html
+
+# Or simply open the file in your browser
 ```
+
+#### 3. Python Code Example
+
+```python
+import requests
+
+# Analyze sentiment
+response = requests.post(
+    "http://localhost:8000/api/v1/sentiment/sentiment",
+    json={"text": "This is amazing! I'm very happy with the product."}
+)
+
+result = response.json()
+print(f"Sentiment: {result['sentiment']}")
+print(f"Polarity: {result['polarity']}")
+print(f"Subjectivity: {result['subjectivity']}")
+```
+
+## Understanding Results
+
+- **sentiment**: The overall emotion (positive, negative, or neutral)
+- **polarity**: The sentiment strength (-1.0 to 1.0, where -1 is very negative and 1 is very positive)
+- **subjectivity**: How subjective/opinionated the text is (0.0 to 1.0, where 0 is objective and 1 is subjective)
 
 ## Troubleshooting
 
-### Python 3.13 Compatibility Issues
+If you encounter "Address already in use" errors:
 
-If you're using Python 3.13, you might encounter compatibility issues with some dependencies, especially with FastAPI and Pydantic. The following error might occur:
-
+```bash
+pkill -f uvicorn
 ```
-TypeError: ForwardRef._evaluate() missing 1 required keyword-only argument: 'recursive_guard'
-```
-
-Solution:
-
-- Use Python 3.7 - 3.12 instead
-- If you must use Python 3.13, consider installing the dependencies with the `--no-deps` flag and manually installing compatible versions of the transitive dependencies.
-
-### NLTK Data Download Issues
-
-If you encounter errors related to NLTK data, you can manually download it:
-
-```python
-import nltk
-nltk.download('punkt')
-```
-
-## 12-Factor App Principles
-
-This application follows the 12-factor app methodology:
-
-1. **Codebase**: Single codebase tracked in version control
-2. **Dependencies**: Explicitly declared and isolated dependencies
-3. **Config**: Configuration stored in environment variables
-4. **Backing Services**: Backing services treated as attached resources (not applicable)
-5. **Build, release, run**: Strict separation of build and run stages
-6. **Processes**: Stateless processes
-7. **Port binding**: Services exported via port binding
-8. **Concurrency**: Scale via process model
-9. **Disposability**: Fast startup and graceful shutdown
-10. **Dev/prod parity**: Development, staging, and production as similar as possible
-11. **Logs**: Logs treated as event streams
-12. **Admin processes**: Admin/maintenance tasks as one-off processes (not applicable)
