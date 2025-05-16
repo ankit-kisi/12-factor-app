@@ -68,56 +68,6 @@ curl -X 'POST' 'http://localhost:8000/api/v1/sentiment/sentiment' \
 curl -X 'GET' 'http://localhost:8000/api/v1/sentiment/health'
 ```
 
-### Provided Examples
-
-This project includes several examples to help you get started:
-
-#### 1. Command Line Tool
-
-The `sentiment_cli.py` script provides a simple command-line interface:
-
-```bash
-# Make the script executable
-chmod +x sentiment_cli.py
-
-# Analyze text directly
-./sentiment_cli.py "I love this product. It's amazing!"
-
-# Analyze text from a file
-./sentiment_cli.py -f sample_review.txt
-
-# Enter text interactively
-./sentiment_cli.py
-```
-
-#### 2. Web Interface Demo
-
-Open the HTML demo in your browser:
-
-```bash
-# On macOS
-open sentiment_demo.html
-
-# Or simply open the file in your browser
-```
-
-#### 3. Python Code Example
-
-```python
-import requests
-
-# Analyze sentiment
-response = requests.post(
-    "http://localhost:8000/api/v1/sentiment/sentiment",
-    json={"text": "This is amazing! I'm very happy with the product."}
-)
-
-result = response.json()
-print(f"Sentiment: {result['sentiment']}")
-print(f"Polarity: {result['polarity']}")
-print(f"Subjectivity: {result['subjectivity']}")
-```
-
 ## Understanding Results
 
 - **sentiment**: The overall emotion (positive, negative, or neutral)
