@@ -9,7 +9,7 @@ A FastAPI application for analyzing text sentiment and emotions.
 ```bash
 # 1. Clone the repository
 git clone https://github.com/ankit-kisi/12-factor-app.git
-cd 12-factor-calc
+cd 12-factor-app
 
 # 2. Create and activate virtual environment
 python3.11 -m venv venv_py311
